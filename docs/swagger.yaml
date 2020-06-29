@@ -1,19 +1,17 @@
 definitions:
-  dto.DemoInput:
+  dto.AdminLoginInput:
     properties:
-      age:
-        example: 20
-        type: integer
-      name:
-        example: 姓名
-        type: string
-      passwd:
+      password:
+        description: 登陆密码
         example: "123456"
         type: string
+      username:
+        description: 管理员账号
+        example: admin
+        type: string
     required:
-    - age
-    - name
-    - passwd
+    - password
+    - username
     type: object
   middleware.Response:
     properties:
@@ -32,32 +30,28 @@ info:
   contact: {}
   license: {}
 paths:
-  /demo/bind:
+  /admin_login/login:
     post:
       consumes:
       - application/json
-      description: 测试数据绑定
-      operationId: /demo/bind
+      description: 管理员登陆
+      operationId: /admin_login/login
       parameters:
       - description: body
         in: body
-        name: polygon
+        name: body
         required: true
         schema:
-          $ref: '#/definitions/dto.DemoInput'
+          $ref: '#/definitions/dto.AdminLoginInput'
+          type: object
       produces:
       - application/json
       responses:
         "200":
           description: success
           schema:
-            allOf:
-            - $ref: '#/definitions/middleware.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.DemoInput'
-              type: object
-      summary: 测试数据绑定
+            $ref: '#/definitions/middleware.Response'
+      summary: 管理员登陆
       tags:
-      - 用户
+      - 管理员接口
 swagger: "2.0"

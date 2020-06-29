@@ -6,10 +6,14 @@ import (
 )
 
 type AdminLoginInput struct {
-	UserName string `json:"username" form:"username" comment:"姓名" example:"姓名" validate:"required"`
-	Password string `json:"password" form:"password" comment:"密码" example:"123456" validate:"required"`
+	UserName string `json:"username" form:"username" comment:"姓名" example:"admin" validate:"required,is_valid_username"` // 管理员账号
+	Password string `json:"password" form:"password" comment:"密码" example:"123456" validate:"required"`                  // 登陆密码
 }
 
 func (input *AdminLoginInput) BindValidParam(ctx *gin.Context) error {
-	return public.DefaultGetValidParams(ctx,input)
+	return public.DefaultGetValidParams(ctx, input)
+}
+
+type AdminLoginOutPut struct {
+	Token string `json:"token" from:"token" comment:"token" example:"token" validate:""` // 令牌
 }
