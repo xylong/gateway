@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/swaggo/files"
 	"github.com/swaggo/gin-swagger"
+	"log"
 )
 
 // @title Swagger Example API
@@ -74,34 +75,20 @@ func InitRouter(middlewares ...gin.HandlerFunc) *gin.Engine {
 	})
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
-	//demo
-	v1 := router.Group("/demo")
-	v1.Use(middleware.RecoveryMiddleware(), middleware.RequestLog(), middleware.IPAuthMiddleware(), middleware.TranslationMiddleware())
-	{
-		controller.DemoRegister(v1)
+	adminLoginRouter:=router.Group("/admin_login")
+	store,err:=sessions.NewRedisStore(10,"tcp","localhost:6379","",[]byte("secret"))
+	if err!=nil {
+		log.Fatal("sessions.NewRedisStore err:%v",err)
 	}
 
-	//非登陆接口
-	store := sessions.NewCookieStore([]byte("secret"))
-	apiNormalGroup := router.Group("/api")
-	apiNormalGroup.Use(sessions.Sessions("mysession", store),
+	adminLoginRouter.Use(
+		sessions.Sessions("mysession",store),
 		middleware.RecoveryMiddleware(),
 		middleware.RequestLog(),
 		middleware.TranslationMiddleware())
 	{
-		controller.ApiRegister(apiNormalGroup)
+		controller.AdminLoginRegister(adminLoginRouter)
 	}
 
-	//登陆接口
-	apiAuthGroup := router.Group("/api")
-	apiAuthGroup.Use(
-		sessions.Sessions("mysession", store),
-		middleware.RecoveryMiddleware(),
-		middleware.RequestLog(),
-		middleware.SessionAuthMiddleware(),
-		middleware.TranslationMiddleware())
-	{
-		controller.ApiLoginRegister(apiAuthGroup)
-	}
 	return router
 }
