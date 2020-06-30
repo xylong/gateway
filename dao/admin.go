@@ -23,25 +23,23 @@ func (admin *Admin) TableName() string {
 	return "gateway_admin"
 }
 
-func (admin *Admin) Find(ctx *gin.Context, db *gorm.DB) (*Admin, error) {
-	err := db.SetCtx(public.GetGinTraceContext(ctx)).Where(admin).Find(admin).Error
-	if err != nil {
-		return nil, err
-	}
-	return admin, nil
+// Find 查找用户
+func (admin *Admin) Find(ctx *gin.Context, db *gorm.DB) (err error) {
+	err = db.SetCtx(public.GetGinTraceContext(ctx)).Where(admin).Find(admin).Error
+	return
 }
 
 // LoginCheck 登陆判断
-func (admin *Admin) LoginCheck(ctx *gin.Context, db *gorm.DB, input *dto.AdminLoginInput) (*Admin, error) {
+func (admin *Admin) LoginCheck(ctx *gin.Context, db *gorm.DB, input *dto.AdminLoginInput) error {
 	admin.UserName = input.UserName
 	admin.IsDelete = 0
-	info, err := admin.Find(ctx, db)
+	err := admin.Find(ctx, db)
 	if err != nil {
-		return nil, errors.New("用户不存在")
+		return errors.New("用户不存在")
 	}
-	saltPassword := public.SaltPassword(info.Salt, input.Password)
-	if info.Password != saltPassword {
-		return nil, errors.New("密码错误")
+	saltPassword := public.SaltPassword(admin.Salt, input.Password)
+	if admin.Password != saltPassword {
+		return errors.New("密码错误")
 	}
-	return info, nil
+	return nil
 }

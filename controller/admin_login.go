@@ -41,7 +41,7 @@ func (c *AdminLoginController) Login(ctx *gin.Context) {
 		return
 	}
 	admin := &dao.Admin{}
-	admin, err = admin.LoginCheck(ctx, tx, input)
+	err = admin.LoginCheck(ctx, tx, input)
 	if err != nil {
 		middleware.ResponseError(ctx, 2002, err)
 		return
