@@ -23,19 +23,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.AdminInfoOutput"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -53,7 +41,7 @@
                 "tags": [
                     "管理员接口"
                 ],
-                "summary": "管理员登陆",
+                "summary": "登陆",
                 "operationId": "/admin_login/login",
                 "parameters": [
                     {
@@ -62,6 +50,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/dto.AdminLoginInput"
                         }
                     }
@@ -70,19 +59,31 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.AdminLoginOutPut"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
+                        }
+                    }
+                }
+            }
+        },
+        "/admin_login/logout": {
+            "get": {
+                "description": "管理员登出",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "管理员接口"
+                ],
+                "summary": "登出",
+                "operationId": "/admin_login/logout",
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -90,32 +91,6 @@
         }
     },
     "definitions": {
-        "dto.AdminInfoOutput": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "introduction": {
-                    "type": "string"
-                },
-                "login_time": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "dto.AdminLoginInput": {
             "type": "object",
             "required": [
@@ -132,16 +107,6 @@
                     "description": "管理员账号",
                     "type": "string",
                     "example": "admin"
-                }
-            }
-        },
-        "dto.AdminLoginOutPut": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "description": "令牌",
-                    "type": "string",
-                    "example": "token"
                 }
             }
         },

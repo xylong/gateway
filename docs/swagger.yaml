@@ -1,21 +1,4 @@
 definitions:
-  dto.AdminInfoOutput:
-    properties:
-      avatar:
-        type: string
-      id:
-        type: integer
-      introduction:
-        type: string
-      login_time:
-        type: string
-      name:
-        type: string
-      roles:
-        items:
-          type: string
-        type: array
-    type: object
   dto.AdminLoginInput:
     properties:
       password:
@@ -29,13 +12,6 @@ definitions:
     required:
     - password
     - username
-    type: object
-  dto.AdminLoginOutPut:
-    properties:
-      token:
-        description: 令牌
-        example: token
-        type: string
     type: object
   middleware.Response:
     properties:
@@ -66,12 +42,7 @@ paths:
         "200":
           description: success
           schema:
-            allOf:
-            - $ref: '#/definitions/middleware.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.AdminInfoOutput'
-              type: object
+            $ref: '#/definitions/middleware.Response'
       summary: 管理员信息
       tags:
       - 管理员接口
@@ -88,19 +59,31 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/dto.AdminLoginInput'
+          type: object
       produces:
       - application/json
       responses:
         "200":
           description: success
           schema:
-            allOf:
-            - $ref: '#/definitions/middleware.Response'
-            - properties:
-                data:
-                  $ref: '#/definitions/dto.AdminLoginOutPut'
-              type: object
-      summary: 管理员登陆
+            $ref: '#/definitions/middleware.Response'
+      summary: 登陆
+      tags:
+      - 管理员接口
+  /admin_login/logout:
+    get:
+      consumes:
+      - application/json
+      description: 管理员登出
+      operationId: /admin_login/logout
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/middleware.Response'
+      summary: 登出
       tags:
       - 管理员接口
 swagger: "2.0"
