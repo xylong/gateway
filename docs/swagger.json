@@ -23,19 +23,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.AdminInfoOutput"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -62,6 +50,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/dto.ChangePasswordInput"
                         }
                     }
@@ -70,19 +59,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -109,6 +86,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
+                            "type": "object",
                             "$ref": "#/definitions/dto.AdminLoginInput"
                         }
                     }
@@ -117,19 +95,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.AdminLoginOutPut"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -153,19 +119,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -211,19 +165,41 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/dto.ServiceListOutput"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "服务列表",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务管理"
+                ],
+                "summary": "添加http服务",
+                "operationId": "/service/add_http",
+                "parameters": [
+                    {
+                        "description": "body",
+                        "name": "body",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "type": "object",
+                            "$ref": "#/definitions/dto.ServiceAddHTTPInput"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -254,19 +230,7 @@
                     "200": {
                         "description": "success",
                         "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/middleware.Response"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "string"
-                                        }
-                                    }
-                                }
-                            ]
+                            "$ref": "#/definitions/middleware.Response"
                         }
                     }
                 }
@@ -274,32 +238,6 @@
         }
     },
     "definitions": {
-        "dto.AdminInfoOutput": {
-            "type": "object",
-            "properties": {
-                "avatar": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "integer"
-                },
-                "introduction": {
-                    "type": "string"
-                },
-                "login_time": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "roles": {
-                    "type": "array",
-                    "items": {
-                        "type": "string"
-                    }
-                }
-            }
-        },
         "dto.AdminLoginInput": {
             "type": "object",
             "required": [
@@ -319,16 +257,6 @@
                 }
             }
         },
-        "dto.AdminLoginOutPut": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "description": "令牌",
-                    "type": "string",
-                    "example": "token"
-                }
-            }
-        },
         "dto.ChangePasswordInput": {
             "type": "object",
             "required": [
@@ -342,56 +270,99 @@
                 }
             }
         },
-        "dto.ServiceItemOutput": {
+        "dto.ServiceAddHTTPInput": {
             "type": "object",
+            "required": [
+                "ip_list",
+                "rule",
+                "service_desc",
+                "service_name",
+                "weight_list"
+            ],
             "properties": {
-                "id": {
-                    "description": "id",
-                    "type": "integer"
-                },
-                "load_type": {
-                    "description": "类型",
-                    "type": "integer"
-                },
-                "qpd": {
-                    "description": "qpd",
-                    "type": "integer"
-                },
-                "qps": {
-                    "description": "qps",
-                    "type": "integer"
-                },
-                "service_addr": {
-                    "description": "服务地址",
+                "black_list": {
+                    "description": "黑名单ip",
                     "type": "string"
+                },
+                "clientip_flow_limit": {
+                    "description": "\u0008客户端ip限流",
+                    "type": "integer"
+                },
+                "header_transfor": {
+                    "description": "header转换",
+                    "type": "string"
+                },
+                "ip_list": {
+                    "description": "ip列表",
+                    "type": "string"
+                },
+                "need_https": {
+                    "description": "支持https",
+                    "type": "integer"
+                },
+                "need_strip_uri": {
+                    "description": "启用strip_uri",
+                    "type": "integer"
+                },
+                "need_websocket": {
+                    "description": "是否支持websocket",
+                    "type": "integer"
+                },
+                "open_auth": {
+                    "description": "关键词",
+                    "type": "integer"
+                },
+                "round_type": {
+                    "description": "轮询方式",
+                    "type": "integer"
+                },
+                "rule": {
+                    "description": "域名或者前缀",
+                    "type": "string"
+                },
+                "rule_type": {
+                    "description": "接入类型",
+                    "type": "integer"
                 },
                 "service_desc": {
                     "description": "服务描述",
                     "type": "string"
                 },
+                "service_flow_limit": {
+                    "description": "服务端限流",
+                    "type": "integer"
+                },
                 "service_name": {
-                    "description": "服务名称",
+                    "description": "服务名",
                     "type": "string"
                 },
-                "total_node": {
-                    "description": "节点数",
+                "upstream_connect_timeout": {
+                    "description": "建立连接超时, 单位s",
                     "type": "integer"
-                }
-            }
-        },
-        "dto.ServiceListOutput": {
-            "type": "object",
-            "properties": {
-                "list": {
-                    "description": "列表",
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/dto.ServiceItemOutput"
-                    }
                 },
-                "total": {
-                    "description": "总数",
+                "upstream_header_timeout": {
+                    "description": "获取header超时, 单位s",
                     "type": "integer"
+                },
+                "upstream_idle_timeout": {
+                    "description": "链接最大空闲时间, 单位s",
+                    "type": "integer"
+                },
+                "upstream_max_idle": {
+                    "description": "最大空闲链接数",
+                    "type": "integer"
+                },
+                "url_rewrite": {
+                    "description": "url重写功能",
+                    "type": "string"
+                },
+                "weight_list": {
+                    "description": "\u0008权重列表",
+                    "type": "string"
+                },
+                "white_list": {
+                    "description": "白名单ip",
+                    "type": "string"
                 }
             }
         },

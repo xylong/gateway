@@ -16,7 +16,26 @@ type ServiceController struct {
 func ServiceRegister(group *gin.RouterGroup) {
 	service := &ServiceController{}
 	group.GET("", service.Index)
+	group.POST("", service.AddHttp)
 	group.DELETE("", service.Delete)
+}
+
+// ServiceAddHttp godoc
+// @Summary 添加http服务
+// @Description 服务列表
+// @Tags 服务管理
+// @ID /service/add_http
+// @Accept json
+// @Produce json
+// @Param body body dto.ServiceAddHTTPInput true "body"
+// @Success 200 {object} middleware.Response{data=string} "success"
+// @Router /services [post]
+func (c *ServiceController) AddHttp(ctx *gin.Context) {
+	input := &dto.ServiceAddHTTPInput{}
+	if err := input.BindValidParam(ctx); err != nil {
+		middleware.ResponseError(ctx, 2000, err)
+		return
+	}
 }
 
 // ServiceList godoc
