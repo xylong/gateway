@@ -27,6 +27,6 @@ type ServiceItemOutput struct {
 }
 
 type ServiceListOutput struct {
-	Total int64  `json:"total" form:"total" comment:"总数"` // 总数
-	List  string `json:"list" form:"total" comment:"列表"`  // 列表
+	Total int64               `json:"total" form:"total" comment:"总数"` // 总数
+	List  []ServiceItemOutput `json:"list" form:"list" comment:"列表"`   // 列表
 }
