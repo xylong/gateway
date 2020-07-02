@@ -17,18 +17,16 @@ type AccessControl struct {
 	ServiceFlowLimit  int    `json:"service_flow_limit" gorm:"column:service_flow_limit" description:"服务端限流	"`
 }
 
-func (t *AccessControl) TableName() string {
+func (access *AccessControl) TableName() string {
 	return "gateway_service_access_control"
 }
 
-func (t *AccessControl) Find(c *gin.Context, tx *gorm.DB, search *AccessControl) (*AccessControl, error) {
-	model := &AccessControl{}
-	err := tx.SetCtx(public.GetGinTraceContext(c)).Where(search).Find(model).Error
-	return model, err
+func (access *AccessControl) Find(c *gin.Context, tx *gorm.DB) error {
+	return tx.SetCtx(public.GetGinTraceContext(c)).Where(access).Find(access).Error
 }
 
-func (t *AccessControl) Save(c *gin.Context, tx *gorm.DB) error {
-	if err := tx.SetCtx(public.GetGinTraceContext(c)).Save(t).Error; err != nil {
+func (access *AccessControl) Save(c *gin.Context, tx *gorm.DB) error {
+	if err := tx.SetCtx(public.GetGinTraceContext(c)).Save(access).Error; err != nil {
 		return err
 	}
 	return nil

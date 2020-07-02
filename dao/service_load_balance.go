@@ -24,23 +24,21 @@ type LoadBalance struct {
 	UpstreamMaxIdle        int `json:"upstream_max_idle" gorm:"column:upstream_max_idle" description:"下游最大空闲链接数"`
 }
 
-func (t *LoadBalance) TableName() string {
+func (lb *LoadBalance) TableName() string {
 	return "gateway_service_load_balance"
 }
 
-func (t *LoadBalance) Find(c *gin.Context, tx *gorm.DB, search *LoadBalance) (*LoadBalance, error) {
-	model := &LoadBalance{}
-	err := tx.SetCtx(public.GetGinTraceContext(c)).Where(search).Find(model).Error
-	return model, err
+func (lb *LoadBalance) Find(c *gin.Context, tx *gorm.DB) error {
+	return tx.SetCtx(public.GetGinTraceContext(c)).Where(lb).Find(lb).Error
 }
 
-func (t *LoadBalance) Save(c *gin.Context, tx *gorm.DB) error {
-	if err := tx.SetCtx(public.GetGinTraceContext(c)).Save(t).Error; err != nil {
+func (lb *LoadBalance) Save(c *gin.Context, tx *gorm.DB) error {
+	if err := tx.SetCtx(public.GetGinTraceContext(c)).Save(lb).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func (t *LoadBalance) GetIpListByMode() []string {
-	return strings.Split(t.IpList, ",")
+func (lb *LoadBalance) GetIpListByMode() []string {
+	return strings.Split(lb.IpList, ",")
 }

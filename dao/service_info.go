@@ -22,49 +22,33 @@ func (info *ServiceInfo) TableName() string {
 	return "gateway_service_info"
 }
 
-func (info *ServiceInfo) ServiceDetail(ctx *gin.Context, db *gorm.DB, search *ServiceInfo) (detail *ServiceDetail, err error) {
-	httpRule := &HttpRule{
-		ServiceID: search.Id,
-	}
-	httpRule, err = httpRule.Find(ctx, db, httpRule)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return
+func (info *ServiceInfo) ServiceDetail(ctx *gin.Context, db *gorm.DB) (detail *ServiceDetail, err error) {
+	type dao interface {
+		Find(c *gin.Context, tx *gorm.DB) error
 	}
 
-	tcpRule := &TcpRule{
-		ServiceID: search.Id,
-	}
-	tcpRule, err = tcpRule.Find(ctx, db, tcpRule)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return
+	httpRule := &HttpRule{ServiceID: info.Id}
+	tcpRule := &TcpRule{ServiceID: info.Id}
+	grpcRule := &GrpcRule{ServiceID: info.Id}
+	accessControl := &AccessControl{ServiceID: info.Id}
+	loadBalance := &LoadBalance{ServiceID: info.Id}
+
+	rules := [5]dao{
+		httpRule,
+		tcpRule,
+		grpcRule,
+		accessControl,
+		loadBalance,
 	}
 
-	grpcRule := &GrpcRule{
-		ServiceID: search.Id,
-	}
-	grpcRule, err = grpcRule.Find(ctx, db, grpcRule)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return
-	}
-
-	accessControl := &AccessControl{
-		ServiceID: search.Id,
-	}
-	accessControl, err = accessControl.Find(ctx, db, accessControl)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return
-	}
-
-	loadBalance := &LoadBalance{
-		ServiceID: search.Id,
-	}
-	loadBalance, err = loadBalance.Find(ctx, db, loadBalance)
-	if err != nil && err != gorm.ErrRecordNotFound {
-		return
+	for _, rule := range rules {
+		if err = rule.Find(ctx, db); err != nil && err != gorm.ErrRecordNotFound {
+			continue
+		}
 	}
 
 	detail = &ServiceDetail{
-		Info:          search,
+		Info:          info,
 		HTTPRule:      httpRule,
 		TCPRule:       tcpRule,
 		GRPCRule:      grpcRule,

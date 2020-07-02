@@ -52,13 +52,13 @@ func (c *ServiceController) Index(ctx *gin.Context) {
 	// 格式化输出
 	outList := []dto.ServiceItemOutput{}
 	for _, item := range list {
-		serviceDetail, err := item.ServiceDetail(ctx, tx, &item)
+		serviceDetail, err := item.ServiceDetail(ctx, tx)
 		if err != nil {
 			middleware.ResponseError(ctx, 2003, err)
 			return
 		}
 
-		serviceAddr := "unknow"
+		serviceAddr := "unknown"
 		clusterIp := lib.GetStringConf("base.cluster.cluster_ip")
 		clusterPort := lib.GetStringConf("base.cluster.cluster_port")
 		clusterSslIp := lib.GetStringConf("base.cluster.cluster_ssl_port")
