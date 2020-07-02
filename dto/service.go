@@ -30,3 +30,12 @@ type ServiceListOutput struct {
 	Total int64               `json:"total" form:"total" comment:"总数"` // 总数
 	List  []ServiceItemOutput `json:"list" form:"list" comment:"列表"`   // 列表
 }
+
+// ServiceDeleteInput 删除服务
+type ServiceDeleteInput struct {
+	ID int64 `json:"id" form:"id" comment:"服务ID" example:"1" validate:"required"` // 服务ID
+}
+
+func (input *ServiceDeleteInput) BindValidParam(ctx *gin.Context) error {
+	return public.DefaultGetValidParams(ctx, input)
+}

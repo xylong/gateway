@@ -191,7 +191,7 @@ var doc = `{
                 }
             }
         },
-        "/service/index": {
+        "/services": {
             "get": {
                 "description": "服务列表",
                 "consumes": [
@@ -240,6 +240,49 @@ var doc = `{
                                     "properties": {
                                         "data": {
                                             "$ref": "#/definitions/dto.ServiceListOutput"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "删除服务",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "服务管理"
+                ],
+                "summary": "删除服务",
+                "operationId": "/service/delete",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "服务ID",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "success",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/middleware.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "string"
                                         }
                                     }
                                 }
@@ -319,12 +362,52 @@ var doc = `{
                 }
             }
         },
+        "dto.ServiceItemOutput": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "description": "id",
+                    "type": "integer"
+                },
+                "load_type": {
+                    "description": "类型",
+                    "type": "integer"
+                },
+                "qpd": {
+                    "description": "qpd",
+                    "type": "integer"
+                },
+                "qps": {
+                    "description": "qps",
+                    "type": "integer"
+                },
+                "service_addr": {
+                    "description": "服务地址",
+                    "type": "string"
+                },
+                "service_desc": {
+                    "description": "服务描述",
+                    "type": "string"
+                },
+                "service_name": {
+                    "description": "服务名称",
+                    "type": "string"
+                },
+                "total_node": {
+                    "description": "节点数",
+                    "type": "integer"
+                }
+            }
+        },
         "dto.ServiceListOutput": {
             "type": "object",
             "properties": {
                 "list": {
                     "description": "列表",
-                    "type": "string"
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/dto.ServiceItemOutput"
+                    }
                 },
                 "total": {
                     "description": "总数",

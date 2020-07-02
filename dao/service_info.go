@@ -65,7 +65,7 @@ func (info *ServiceInfo) Page(ctx *gin.Context, db *gorm.DB, input *dto.ServiceL
 	if input.Info != "" {
 		query = query.Where("(service_name like ? or service_desc like ?)", "%"+input.Info+"%", "%"+input.Info+"%")
 	}
-	if err = query.Limit(input.PageSize).Offset(offset).Find(&list).Error; err != nil && err != gorm.ErrRecordNotFound {
+	if err = query.Limit(input.PageSize).Offset(offset).Order("id desc").Find(&list).Error; err != nil && err != gorm.ErrRecordNotFound {
 		return
 	}
 	query.Limit(input.PageSize).Offset(offset).Count(&total)
@@ -74,8 +74,7 @@ func (info *ServiceInfo) Page(ctx *gin.Context, db *gorm.DB, input *dto.ServiceL
 
 // Find 查找
 func (info *ServiceInfo) Find(ctx *gin.Context, db *gorm.DB) (err error) {
-	err = db.SetCtx(public.GetGinTraceContext(ctx)).Where(info).Find(info).Error
-	return
+	return db.SetCtx(public.GetGinTraceContext(ctx)).Where(info).Find(info).Error
 }
 
 // Save 保存

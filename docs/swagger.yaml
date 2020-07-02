@@ -46,11 +46,40 @@ definitions:
     required:
     - password
     type: object
+  dto.ServiceItemOutput:
+    properties:
+      id:
+        description: id
+        type: integer
+      load_type:
+        description: 类型
+        type: integer
+      qpd:
+        description: qpd
+        type: integer
+      qps:
+        description: qps
+        type: integer
+      service_addr:
+        description: 服务地址
+        type: string
+      service_desc:
+        description: 服务描述
+        type: string
+      service_name:
+        description: 服务名称
+        type: string
+      total_node:
+        description: 节点数
+        type: integer
+    type: object
   dto.ServiceListOutput:
     properties:
       list:
         description: 列表
-        type: string
+        items:
+          $ref: '#/definitions/dto.ServiceItemOutput'
+        type: array
       total:
         description: 总数
         type: integer
@@ -170,7 +199,33 @@ paths:
       summary: 登出
       tags:
       - 管理员接口
-  /service/index:
+  /services:
+    delete:
+      consumes:
+      - application/json
+      description: 删除服务
+      operationId: /service/delete
+      parameters:
+      - description: 服务ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 删除服务
+      tags:
+      - 服务管理
     get:
       consumes:
       - application/json

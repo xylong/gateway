@@ -15,7 +15,8 @@ type ServiceController struct {
 
 func ServiceRegister(group *gin.RouterGroup) {
 	service := &ServiceController{}
-	group.GET("/index", service.Index)
+	group.GET("", service.Index)
+	group.DELETE("", service.Delete)
 }
 
 // ServiceList godoc
@@ -29,7 +30,7 @@ func ServiceRegister(group *gin.RouterGroup) {
 // @Param page_no query int true "页码"
 // @Param page_size query int true "每页条数"
 // @Success 200 {object} middleware.Response{data=dto.ServiceListOutput} "success"
-// @Router /service/index [get]
+// @Router /services [get]
 func (c *ServiceController) Index(ctx *gin.Context) {
 	input := &dto.ServiceListInput{}
 	if err := input.BindValidParam(ctx); err != nil {
@@ -101,4 +102,42 @@ func (c *ServiceController) Index(ctx *gin.Context) {
 		Total: total,
 		List:  outList,
 	})
+}
+
+// ServiceDelete godoc
+// @Summary 删除服务
+// @Description 删除服务
+// @Tags 服务管理
+// @ID /service/delete
+// @Accept json
+// @Produce json
+// @Param id query string true "服务ID"
+// @Success 200 {object} middleware.Response{data=string} "success"
+// @Router /services [delete]
+func (c *ServiceController) Delete(ctx *gin.Context) {
+	input := &dto.ServiceDeleteInput{}
+	if err := input.BindValidParam(ctx); err != nil {
+		middleware.ResponseError(ctx, 2000, err)
+		return
+	}
+
+	tx, err := lib.GetGormPool("default")
+	if err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
+
+	info := &dao.ServiceInfo{
+		Id: input.ID,
+	}
+	if err := info.Find(ctx, tx); err != nil {
+		middleware.ResponseError(ctx, 2002, err)
+		return
+	}
+	info.IsDelete = 1
+	if err = info.Save(ctx, tx); err != nil {
+		middleware.ResponseError(ctx, 2003, err)
+		return
+	}
+	middleware.ResponseSuccess(ctx, "")
 }
