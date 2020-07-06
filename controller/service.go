@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"fmt"
 	"github.com/e421083458/gateway/dao"
 	"github.com/e421083458/gateway/dto"
@@ -8,6 +9,7 @@ import (
 	"github.com/e421083458/gateway/public"
 	"github.com/e421083458/golang_common/lib"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 type ServiceController struct {
@@ -36,6 +38,63 @@ func (c *ServiceController) AddHttp(ctx *gin.Context) {
 		middleware.ResponseError(ctx, 2000, err)
 		return
 	}
+
+	tx, err := lib.GetGormPool("default")
+	if err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
+
+	// 事务
+	tx = tx.Begin()
+	service := &dao.ServiceInfo{ServiceName: input.ServiceName}
+	if err = service.Find(ctx, tx); err == nil {
+		tx.Rollback()
+		middleware.ResponseError(ctx, 2002, errors.New("服务已存在"))
+		return
+	}
+	httpUrl := &dao.HttpRule{
+		RuleType: input.RuleType,
+		Rule:     input.Rule,
+	}
+	if err = httpUrl.Find(ctx, tx); err == nil {
+		tx.Rollback()
+		middleware.ResponseError(ctx, 2003, errors.New("服务接入前缀或域名已存在"))
+		return
+	}
+	if len(strings.Split(input.IpList, "\n")) != len(strings.Split(input.WeightList, "\n")) {
+		tx.Rollback()
+		middleware.ResponseError(ctx, 2004, errors.New("IP列表与权重列表数量不一致"))
+		return
+	}
+
+	service = &dao.ServiceInfo{
+		ServiceName: input.ServiceName,
+		ServiceDesc: input.ServiceDesc,
+	}
+	if err := service.Save(ctx, tx); err != nil {
+		tx.Rollback()
+		middleware.ResponseError(ctx, 2005, err)
+		return
+	}
+
+	httpRule := &dao.HttpRule{
+		ServiceID:      service.Id,
+		RuleType:       input.RuleType,
+		Rule:           input.Rule,
+		NeedHttps:      input.NeedHttps,
+		NeedStripUri:   input.NeedStripUri,
+		NeedWebsocket:  input.NeedWebsocket,
+		UrlRewrite:     input.UrlRewrite,
+		HeaderTransfor: input.HeaderTransfor,
+	}
+	if err := httpRule.Save(ctx, tx); err != nil {
+		tx.Rollback()
+		middleware.ResponseError(ctx, 2006, err)
+		return
+	}
+
+	middleware.ResponseSuccess(ctx, "")
 }
 
 // ServiceList godoc

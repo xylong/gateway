@@ -48,11 +48,11 @@ func TranslationMiddleware() gin.HandlerFunc {
 
 			//自定义验证方法
 			//https://github.com/go-playground/validator/blob/v9/_examples/custom-validation/main.go
-			val.RegisterValidation("is_valid_username", func(fl validator.FieldLevel) bool {
+			val.RegisterValidation("valid_username", func(fl validator.FieldLevel) bool {
 				return fl.Field().String() == "admin"
 			})
-			val.RegisterValidation("is_valid_service_name", func(fl validator.FieldLevel) bool {
-				matched, _ := regexp.Match(`[a-zA-Z0-9]{6,128}`, []byte(fl.Field().String()))
+			val.RegisterValidation("valid_service_name", func(fl validator.FieldLevel) bool {
+				matched, _ := regexp.Match(`^[a-zA-Z0-9_]{6,128}$`, []byte(fl.Field().String()))
 				return matched
 			})
 			val.RegisterValidation("valid_rule", func(fl validator.FieldLevel) bool {
@@ -113,16 +113,16 @@ func TranslationMiddleware() gin.HandlerFunc {
 
 			//自定义验证器
 			//https://github.com/go-playground/validator/blob/v9/_examples/translations/main.go
-			val.RegisterTranslation("is_valid_username", trans, func(ut ut.Translator) error {
-				return ut.Add("is_valid_username", "{0} 填写不正确哦", true)
+			val.RegisterTranslation("valid_username", trans, func(ut ut.Translator) error {
+				return ut.Add("valid_username", "{0} 填写不正确哦", true)
 			}, func(ut ut.Translator, fe validator.FieldError) string {
-				t, _ := ut.T("is_valid_username", fe.Field())
+				t, _ := ut.T("valid_username", fe.Field())
 				return t
 			})
-			val.RegisterTranslation("is_valid_service_name", trans, func(ut ut.Translator) error {
-				return ut.Add("is_valid_service_name", "{0} 不符合格式", true)
+			val.RegisterTranslation("valid_service_name", trans, func(ut ut.Translator) error {
+				return ut.Add("valid_service_name", "{0} 不符合输入格式", true)
 			}, func(ut ut.Translator, fe validator.FieldError) string {
-				t, _ := ut.T("is_valid_service_name", fe.Field())
+				t, _ := ut.T("valid_service_name", fe.Field())
 				return t
 			})
 			val.RegisterTranslation("valid_rule", trans, func(ut ut.Translator) error {
