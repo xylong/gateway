@@ -104,8 +104,37 @@ func (c *AppController) Update(ctx *gin.Context) {
 
 }
 
+// APPDelete godoc
+// @Summary 租户删除
+// @Description 租户删除
+// @Tags 租户管理
+// @ID /app/delete
+// @Accept  json
+// @Produce  json
+// @Param id query string true "租户ID"
+// @Success 200 {object} middleware.Response{data=string} "success"
+// @Router /apps [delete]
 func (c *AppController) Delete(ctx *gin.Context) {
+	params := &dto.APPDetailInput{}
+	if err := params.GetValidParams(ctx); err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
 
+	app := &dao.App{
+		ID: params.ID,
+	}
+	if err := app.Find(ctx, lib.GORMDefaultPool); err != nil {
+		middleware.ResponseError(ctx, 2002, err)
+		return
+	}
+	app.IsDelete = 1
+	if err := app.Save(ctx, lib.GORMDefaultPool); err != nil {
+		middleware.ResponseError(ctx, 2003, err)
+		return
+	}
+	middleware.ResponseSuccess(ctx, "")
+	return
 }
 
 func (c *AppController) Statistics(ctx *gin.Context) {

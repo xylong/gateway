@@ -730,6 +730,32 @@ paths:
       tags:
       - 租户管理
   /apps:
+    delete:
+      consumes:
+      - application/json
+      description: 租户删除
+      operationId: /app/delete
+      parameters:
+      - description: 租户ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 租户删除
+      tags:
+      - 租户管理
     get:
       consumes:
       - application/json
