@@ -8,6 +8,7 @@ import (
 	"github.com/e421083458/gateway/public"
 	"github.com/e421083458/golang_common/lib"
 	"github.com/gin-gonic/gin"
+	"time"
 )
 
 type AppController struct {
@@ -20,7 +21,7 @@ func AppRegister(group *gin.RouterGroup) {
 	group.POST("apps", app.Add)
 	group.PUT("apps", app.Update)
 	group.DELETE("apps", app.Delete)
-	group.GET("statistics", app.Statistics)
+	group.GET("/app/statistics", app.Statistics)
 }
 
 // APPList godoc
@@ -209,6 +210,34 @@ func (c *AppController) Delete(ctx *gin.Context) {
 	return
 }
 
+// AppStatistics godoc
+// @Summary 租户统计
+// @Description 租户统计
+// @Tags 租户管理
+// @ID /app/statistics
+// @Accept  json
+// @Produce  json
+// @Param id query string true "租户ID"
+// @Success 200 {object} middleware.Response{data=dto.StatisticsOutput} "success"
+// @Router /app/statistics [get]
 func (c *AppController) Statistics(ctx *gin.Context) {
+	params := &dto.APPDetailInput{}
+	if err := params.GetValidParams(ctx); err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
 
+	today := []int64{}
+	// 截止到当前时间
+	for i := 0; i <= time.Now().In(lib.TimeLocation).Hour(); i++ {
+		today = append(today, 0)
+	}
+	yesterday := []int64{}
+	for i := 0; i < 24; i++ {
+		yesterday = append(yesterday, 0)
+	}
+	middleware.ResponseSuccess(ctx, &dto.StatisticsOutput{
+		Today:     today,
+		Yesterday: yesterday,
+	})
 }

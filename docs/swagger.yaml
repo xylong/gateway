@@ -626,6 +626,20 @@ definitions:
     - service_name
     - weight_list
     type: object
+  dto.StatisticsOutput:
+    properties:
+      today:
+        items:
+          type: integer
+        type: array
+      yesterday:
+        items:
+          type: integer
+        type: array
+    required:
+    - today
+    - yesterday
+    type: object
   middleware.Response:
     properties:
       data:
@@ -766,6 +780,33 @@ paths:
                   $ref: '#/definitions/dao.App'
               type: object
       summary: 租户详情
+      tags:
+      - 租户管理
+  /app/statistics:
+    get:
+      consumes:
+      - application/json
+      description: 租户统计
+      operationId: /app/statistics
+      parameters:
+      - description: 租户ID
+        in: query
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.StatisticsOutput'
+              type: object
+      summary: 租户统计
       tags:
       - 租户管理
   /apps:
