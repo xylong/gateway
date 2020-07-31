@@ -203,6 +203,27 @@ definitions:
       total:
         type: integer
     type: object
+  dto.APPUpdateHttpInput:
+    properties:
+      app_id:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      qpd:
+        type: integer
+      qps:
+        type: integer
+      secret:
+        type: string
+      white_ips:
+        type: string
+    required:
+    - id
+    - name
+    - secret
+    type: object
   dto.AdminInfoOutput:
     properties:
       avatar:
@@ -834,6 +855,33 @@ paths:
                   type: string
               type: object
       summary: 租户添加
+      tags:
+      - 租户管理
+    put:
+      consumes:
+      - application/json
+      description: 租户更新
+      operationId: /app/update
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.APPUpdateHttpInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 租户更新
       tags:
       - 租户管理
   /service/grpcs:

@@ -138,8 +138,42 @@ func (c *AppController) Add(ctx *gin.Context) {
 	middleware.ResponseSuccess(ctx, "")
 }
 
+// AppUpdate godoc
+// @Summary 租户更新
+// @Description 租户更新
+// @Tags 租户管理
+// @ID /app/update
+// @Accept  json
+// @Produce  json
+// @Param body body dto.APPUpdateHttpInput true "body"
+// @Success 200 {object} middleware.Response{data=string} "success"
+// @Router /apps [put]
 func (c *AppController) Update(ctx *gin.Context) {
-
+	params := &dto.APPUpdateHttpInput{}
+	if err := params.GetValidParams(ctx); err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
+	app := &dao.App{
+		ID: params.ID,
+	}
+	if err := app.Find(ctx, lib.GORMDefaultPool); err != nil {
+		middleware.ResponseError(ctx, 2002, err)
+		return
+	}
+	if params.Secret == "" {
+		params.Secret = public.MD5(params.AppID)
+	}
+	app.Name = params.Name
+	app.Secret = params.Secret
+	app.WhiteIPS = params.WhiteIPS
+	app.Qps = params.Qps
+	app.Qpd = params.Qpd
+	if err := app.Save(ctx, lib.GORMDefaultPool); err != nil {
+		middleware.ResponseError(ctx, 2003, err)
+		return
+	}
+	middleware.ResponseSuccess(ctx, "")
 }
 
 // APPDelete godoc
