@@ -69,8 +69,31 @@ func (c *AppController) Index(ctx *gin.Context) {
 	})
 }
 
+// APPDetail godoc
+// @Summary 租户详情
+// @Description 租户详情
+// @Tags 租户管理
+// @ID /app/show
+// @Accept  json
+// @Produce  json
+// @Param id query string true "租户ID"
+// @Success 200 {object} middleware.Response{data=dao.App} "success"
+// @Router /app [get]
 func (c *AppController) Show(ctx *gin.Context) {
-
+	var err error
+	params := &dto.APPDetailInput{}
+	if err = params.GetValidParams(ctx); err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
+	app := &dao.App{
+		ID: params.ID,
+	}
+	if err = app.Find(ctx, lib.GORMDefaultPool); err != nil {
+		middleware.ResponseError(ctx, 2002, err)
+		return
+	}
+	middleware.ResponseSuccess(ctx, app)
 }
 
 func (c *AppController) Add(ctx *gin.Context) {
