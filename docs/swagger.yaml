@@ -271,6 +271,17 @@ definitions:
     required:
     - password
     type: object
+  dto.PanelOutput:
+    properties:
+      app_num:
+        type: integer
+      current_qps:
+        type: integer
+      service_num:
+        type: integer
+      today_request_num:
+        type: integer
+    type: object
   dto.ServiceAddGrpcInput:
     properties:
       black_list:
@@ -925,6 +936,48 @@ paths:
       summary: 租户更新
       tags:
       - 租户管理
+  /dashboard/flow_stat:
+    get:
+      consumes:
+      - application/json
+      description: 服务统计
+      operationId: /dashboard/flow_stat
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.ServiceStatOutput'
+              type: object
+      summary: 服务统计
+      tags:
+      - 首页大盘
+  /dashboard/panel:
+    get:
+      consumes:
+      - application/json
+      description: 指标统计
+      operationId: /dashboard/panel
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.PanelOutput'
+              type: object
+      summary: 指标统计
+      tags:
+      - 首页大盘
   /service/grpcs:
     post:
       consumes:

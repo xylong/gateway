@@ -90,7 +90,7 @@ func (a *App) Save(ctx *gin.Context, db *gorm.DB) (err error) {
 	return db.SetCtx(public.GetGinTraceContext(ctx)).Save(a).Error
 }
 
-func (a *App) Select(ctx *gin.Context, db *gorm.DB, params *dto.APPListInput) (apps []App, number int64, err error) {
+func (a *App) Select(ctx *gin.Context, db *gorm.DB, params *dto.APPListInput) (apps []App, total int64, err error) {
 	offset := (params.PageNo - 1) * params.PageSize
 	query := db.SetCtx(public.GetGinTraceContext(ctx))
 	query = query.Table(a.TableName()).Select("*")
@@ -99,5 +99,6 @@ func (a *App) Select(ctx *gin.Context, db *gorm.DB, params *dto.APPListInput) (a
 		query = query.Where(" (name like ? or app_id like ?)", "%"+params.Info+"%", "%"+params.Info+"%")
 	}
 	err = query.Limit(params.PageSize).Offset(offset).Order("id desc").Find(&apps).Error
+	query.Limit(params.PageSize).Offset(offset).Count(&total)
 	return
 }
