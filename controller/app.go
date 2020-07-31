@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"errors"
 	"github.com/e421083458/gateway/dao"
 	"github.com/e421083458/gateway/dto"
 	"github.com/e421083458/gateway/middleware"
+	"github.com/e421083458/gateway/public"
 	"github.com/e421083458/golang_common/lib"
 	"github.com/gin-gonic/gin"
 )
@@ -96,8 +98,44 @@ func (c *AppController) Show(ctx *gin.Context) {
 	middleware.ResponseSuccess(ctx, app)
 }
 
+// AppAdd godoc
+// @Summary 租户添加
+// @Description 租户添加
+// @Tags 租户管理
+// @ID /app/add
+// @Accept  json
+// @Produce  json
+// @Param body body dto.APPAddHttpInput true "body"
+// @Success 200 {object} middleware.Response{data=string} "success"
+// @Router /apps [post]
 func (c *AppController) Add(ctx *gin.Context) {
-
+	params := &dto.APPAddHttpInput{}
+	if err := params.GetValidParams(ctx); err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
+	//验证app_id是否被占用
+	app := &dao.App{
+		AppID: params.AppID,
+	}
+	if err := app.Find(ctx, lib.GORMDefaultPool); err == nil {
+		middleware.ResponseError(ctx, 2002, errors.New("租户ID被占用，请重新输入"))
+		return
+	}
+	if params.Secret == "" {
+		params.Secret = public.MD5(params.AppID)
+	}
+	tx := lib.GORMDefaultPool
+	app.Name = params.Name
+	app.Secret = params.Secret
+	app.WhiteIPS = params.WhiteIPS
+	app.Qps = params.Qps
+	app.Qpd = params.Qpd
+	if err := app.Save(ctx, tx); err != nil {
+		middleware.ResponseError(ctx, 2003, err)
+		return
+	}
+	middleware.ResponseSuccess(ctx, "")
 }
 
 func (c *AppController) Update(ctx *gin.Context) {

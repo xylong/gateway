@@ -149,6 +149,24 @@ definitions:
       service_id:
         type: integer
     type: object
+  dto.APPAddHttpInput:
+    properties:
+      app_id:
+        type: string
+      name:
+        type: string
+      qpd:
+        type: integer
+      qps:
+        type: integer
+      secret:
+        type: string
+      white_ips:
+        type: string
+    required:
+    - app_id
+    - name
+    type: object
   dto.APPListItemOutput:
     properties:
       app_id:
@@ -789,6 +807,33 @@ paths:
                   $ref: '#/definitions/dto.APPListOutput'
               type: object
       summary: 租户列表
+      tags:
+      - 租户管理
+    post:
+      consumes:
+      - application/json
+      description: 租户添加
+      operationId: /app/add
+      parameters:
+      - description: body
+        in: body
+        name: body
+        required: true
+        schema:
+          $ref: '#/definitions/dto.APPAddHttpInput'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  type: string
+              type: object
+      summary: 租户添加
       tags:
       - 租户管理
   /service/grpcs:
