@@ -72,6 +72,12 @@ func (info *ServiceInfo) Page(ctx *gin.Context, db *gorm.DB, input *dto.ServiceL
 	return
 }
 
+func (info *ServiceInfo) GroupByLoadType(ctx *gin.Context, db *gorm.DB) (list []dto.DashServiceStatItemOutput, err error) {
+	query := db.SetCtx(public.GetGinTraceContext(ctx))
+	err = query.Table(info.TableName()).Where("is_delete=0").Select("load_type, count(*) as value").Group("load_type").Scan(&list).Error
+	return
+}
+
 // Find 查找
 func (info *ServiceInfo) Find(ctx *gin.Context, db *gorm.DB) (err error) {
 	return db.SetCtx(public.GetGinTraceContext(ctx)).Where(info).Find(info).Error

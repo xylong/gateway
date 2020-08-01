@@ -271,6 +271,24 @@ definitions:
     required:
     - password
     type: object
+  dto.DashServiceStatItemOutput:
+    properties:
+      name:
+        type: string
+      vlaue:
+        type: integer
+    type: object
+  dto.DashServiceStatOutput:
+    properties:
+      data:
+        items:
+          $ref: '#/definitions/dto.DashServiceStatItemOutput'
+        type: array
+      legend:
+        items:
+          type: string
+        type: array
+    type: object
   dto.PanelOutput:
     properties:
       app_num:
@@ -976,6 +994,27 @@ paths:
                   $ref: '#/definitions/dto.PanelOutput'
               type: object
       summary: 指标统计
+      tags:
+      - 首页大盘
+  /dashboard/service_stat:
+    get:
+      consumes:
+      - application/json
+      description: 服务统计
+      operationId: /dashboard/service_stat
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            allOf:
+            - $ref: '#/definitions/middleware.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/dto.DashServiceStatOutput'
+              type: object
+      summary: 服务统计
       tags:
       - 首页大盘
   /service/grpcs:

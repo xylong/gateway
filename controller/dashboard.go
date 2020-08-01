@@ -1,9 +1,11 @@
 package controller
 
 import (
+	"errors"
 	"github.com/e421083458/gateway/dao"
 	"github.com/e421083458/gateway/dto"
 	"github.com/e421083458/gateway/middleware"
+	"github.com/e421083458/gateway/public"
 	"github.com/e421083458/golang_common/lib"
 	"github.com/e421083458/gorm"
 	"github.com/gin-gonic/gin"
@@ -17,6 +19,7 @@ func DashboardRegister(group *gin.RouterGroup) {
 	ctrl := &DashboardController{}
 	group.GET("/panel", ctrl.Panel)
 	group.GET("/flow_stat", ctrl.FlowStat)
+	group.GET("/service_stat", ctrl.ServiceStat)
 }
 
 // PanelGroupData godoc
@@ -91,5 +94,46 @@ func (c *DashboardController) FlowStat(ctx *gin.Context) {
 	middleware.ResponseSuccess(ctx, &dto.ServiceStatOutput{
 		Today:     todayList,
 		Yesterday: yesterdayList,
+	})
+}
+
+// ServiceStat godoc
+// @Summary 服务统计
+// @Description 服务统计
+// @Tags 首页大盘
+// @ID /dashboard/service_stat
+// @Accept  json
+// @Produce  json
+// @Success 200 {object} middleware.Response{data=dto.DashServiceStatOutput} "success"
+// @Router /dashboard/service_stat [get]
+func (c *DashboardController) ServiceStat(ctx *gin.Context) {
+	var (
+		err  error
+		tx   *gorm.DB
+		list []dto.DashServiceStatItemOutput
+	)
+	if tx, err = lib.GetGormPool("default"); err != nil {
+		middleware.ResponseError(ctx, 2001, err)
+		return
+	}
+	info := &dao.ServiceInfo{}
+	if list, err = info.GroupByLoadType(ctx, tx); err != nil {
+		middleware.ResponseError(ctx, 2002, err)
+		return
+	}
+	legend := []string{}
+	for index, item := range list {
+		name, ok := public.LoadTypeMap[item.LoadType]
+		if !ok {
+			middleware.ResponseError(ctx, 2003, errors.New("load_type not found"))
+			return
+		}
+		list[index].Name = name
+		legend = append(legend, name)
+	}
+
+	middleware.ResponseSuccess(ctx, &dto.DashServiceStatOutput{
+		Legend: legend,
+		Data:   list,
 	})
 }
