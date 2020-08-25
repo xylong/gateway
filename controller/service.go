@@ -103,6 +103,7 @@ func (c *ServiceController) Index(ctx *gin.Context) {
 			Id:          item.Id,
 			ServiceName: item.ServiceName,
 			ServiceDesc: item.ServiceDesc,
+			LoadType:    item.LoadType,
 			ServiceAddr: serviceAddr,
 			Qps:         0,
 			Qpd:         0,
